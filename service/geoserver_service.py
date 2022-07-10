@@ -84,9 +84,13 @@ def process_wms_store(wms_store, workspace_name):
     category_name = wms_store['name']
     wms_layers_href = get(wms_store['href'])['wmsStore']['wmslayers']
     body = get(wms_layers_href)
-    wms_layers = body['wmsLayers']['wmsLayer']
-    subcategories = list(map(lambda wms_layer: process_wms_layer(wms_layer, workspace_name), wms_layers))
-    return {'category_name': category_name, 'subcategories': subcategories}
+    if body['wmsLayers'] != '':
+        wms_layers = body['wmsLayers']['wmsLayer']
+        subcategories = list(map(lambda wms_layer: process_wms_layer(wms_layer, workspace_name), wms_layers))
+        return {'category_name': category_name, 'subcategories': subcategories}
+    else:
+        print('Cannot process wms store from workspace ' + workspace_name)
+        return {}
 
 
 def process_wmts_store(wmts_store, workspace_name):
