@@ -13,7 +13,9 @@ def hello_world():  # put application's code here
 
 @app.route('/categories')
 def get_all_categories():
-    return get_categories()
+    response = get_categories()
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 if __name__ == '__main__':
