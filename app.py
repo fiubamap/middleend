@@ -1,7 +1,7 @@
 from flask import Flask
 import os
 
-from service.geoserver_service import get_layers
+from service.geoserver_service import get_categories
 
 app = Flask(__name__)
 
@@ -11,9 +11,9 @@ def hello_world():  # put application's code here
     return 'Hello World!'
 
 
-@app.route('/layers')
-def get_all_layers():
-    return get_layers()
+@app.route('/categories')
+def get_all_categories():
+    return get_categories()
 
 
 if __name__ == '__main__':
