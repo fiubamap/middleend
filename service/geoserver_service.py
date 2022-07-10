@@ -7,9 +7,10 @@ from settings import GEOSERVER_BASE_URL, GEOSERVER_PASSWORD, GEOSERVER_USERNAME
 
 def get_categories():
     body = get(GEOSERVER_BASE_URL + '/workspaces')
-    categories = list(map(lambda workspace: list(process_workspace(workspace)), body['workspaces']['workspace']))
-    clean_categories = [category for category in categories if category != []]
-    return make_response(json.dumps(list(itertools.chain(*clean_categories))), 200)
+    categories_by_workspace = list(map(lambda workspace: list(process_workspace(workspace)), body['workspaces']['workspace']))
+    filtered_categories = [category for category in categories_by_workspace if category != []]
+    flattened_categories = list(itertools.chain(*filtered_categories))
+    return make_response(json.dumps(flattened_categories), 200)
 
 
 def process_workspace(workspace):
@@ -35,8 +36,7 @@ def get_coverage_stores(workspace):
     body = get(GEOSERVER_BASE_URL + '/workspaces/' + workspace['name'] + '/coveragestores')
     if body['coverageStores'] != '':
         coverage_stores = body['coverageStores']['coverageStore']
-        return list(
-            map(lambda coverage_store: process_coverage_store(coverage_store, workspace['name']), coverage_stores))
+        return list(map(lambda coverage_store: process_coverage_store(coverage_store, workspace['name']), coverage_stores))
     else:
         print("No coverageStores found for workspace " + workspace['name'])
         return []
@@ -99,19 +99,23 @@ def process_wmts_store(wmts_store, workspace_name):
 
 
 def process_data_layer(layer, workspace_name):
-    return {'name': get(layer['href'])['dataLayer']['title'], 'layer_name': workspace_name + ':' + layer['name']}
+    layer_response = get(layer['href'])
+    return {'name': layer_response['dataLayer']['title'], 'layer_name': workspace_name + ':' + layer['name']}
 
 
 def process_coverage_layer(layer, workspace_name):
-    return {'name': get(layer['href'])['coverage']['title'], 'layer_name': workspace_name + ':' + layer['name']}
+    layer_response = get(layer['href'])
+    return {'name': layer_response['coverage']['title'], 'layer_name': workspace_name + ':' + layer['name']}
 
 
 def process_wms_layer(layer, workspace_name):
-    return {'name': get(layer['href'])['wmsLayer']['title'], 'layer_name': workspace_name + ':' + layer['name']}
+    layer_response = get(layer['href'])
+    return {'name': layer_response['wmsLayer']['title'], 'layer_name': workspace_name + ':' + layer['name']}
 
 
 def process_wmts_layer(layer, workspace_name):
-    return {'name': get(layer['href'])['wmtsLayer']['title'], 'layer_name': workspace_name + ':' + layer['name']}
+    layer_response = get(layer['href'])
+    return {'name': layer_response['wmtsLayer']['title'], 'layer_name': workspace_name + ':' + layer['name']}
 
 
 def get(url):
