@@ -1,12 +1,21 @@
 from flask import Flask
 import os
 
+from service.geoserver_service import get_categories
+
 app = Flask(__name__)
 
 
 @app.route('/')
 def hello_world():  # put application's code here
     return 'Hello World!'
+
+
+@app.route('/categories')
+def get_all_categories():
+    response = get_categories()
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 if __name__ == '__main__':
