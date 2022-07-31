@@ -15,12 +15,15 @@ def get_categories():
 
 
 def process_workspace(workspace):
-    return list(itertools.chain(
-        # get_data_stores(workspace),
-        get_coverage_stores(workspace),
-        get_wms_stores(workspace),
-        get_wmts_stores(workspace))
-    )
+    if workspace['name'] != 'mapas_base':
+        return list(itertools.chain(
+            # get_data_stores(workspace),
+            get_coverage_stores(workspace),
+            get_wms_stores(workspace),
+            get_wmts_stores(workspace))
+        )
+    else:
+        return []
 
 
 def get_data_stores(workspace):
