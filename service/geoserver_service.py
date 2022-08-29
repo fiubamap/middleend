@@ -9,8 +9,9 @@ def get_categories():
     body = get(GEOSERVER_BASE_URL + '/workspaces')
     categories_by_workspace = list(
         map(lambda workspace: list(process_workspace(workspace)), body['workspaces']['workspace']))
-    filtered_categories = [category for category in categories_by_workspace if category != []]
+    filtered_categories = [category for category in categories_by_workspace if category != [] and category != [{}]]
     flattened_categories = list(itertools.chain(*filtered_categories))
+    print(json.dumps(categories_by_workspace))
     return make_response(json.dumps(flattened_categories), 200)
 
 
