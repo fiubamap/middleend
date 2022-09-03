@@ -9,15 +9,15 @@ def get_categories():
     body = get(GEOSERVER_BASE_URL + '/workspaces')
     categories_by_workspace = list(
         map(lambda workspace: list(process_workspace(workspace)), body['workspaces']['workspace']))
-    filtered_categories = [category for category in categories_by_workspace if category != [] and category != [{}]]
+    filtered_categories = [category for category in categories_by_workspace if category]
     flattened_categories = list(itertools.chain(*filtered_categories))
-    print(json.dumps(categories_by_workspace))
+    print('categories: ' + json.dumps(categories_by_workspace))
     return make_response(json.dumps(flattened_categories), 200)
 
 
 def process_workspace(workspace):
     return list(itertools.chain(
-        # get_data_stores(workspace),
+        get_data_stores(workspace),
         get_coverage_stores(workspace),
         get_wms_stores(workspace),
         get_wmts_stores(workspace))
@@ -69,9 +69,13 @@ def process_data_store(data_store, workspace_name):
     category_name = data_store['name']
     feature_types_href = get(data_store['href'])['dataStore']['featureTypes']
     body = get(feature_types_href)
-    if body['dataStores'] != '':
-        data_layers = body['dataLayers']['dataLayer']
+    print('Llega')
+    print(body)
+    if body != '':
+        data_layers = body['featureTypes']['featureType']
+        print(data_layers)
         subcategories = list(map(lambda data_layer: process_data_layer(data_layer, workspace_name), data_layers))
+        print(subcategories)
         return {'category_name': category_name, 'subcategories': subcategories}
     else:
         print('Cannot process data store from workspace ' + workspace_name)
@@ -120,7 +124,7 @@ def process_wmts_store(wmts_store, workspace_name):
 
 def process_data_layer(layer, workspace_name):
     layer_response = get(layer['href'])
-    return {'name': layer_response['dataLayer']['title'], 'layer_name': workspace_name + ':' + layer['name']}
+    return {'name': layer_response['featureType']['title'], 'layer_name': workspace_name + ':' + layer['name']}
 
 
 def process_coverage_layer(layer, workspace_name):
