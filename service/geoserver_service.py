@@ -11,7 +11,6 @@ def get_categories():
         map(lambda workspace: list(process_workspace(workspace)), body['workspaces']['workspace']))
     filtered_categories = [category for category in categories_by_workspace if category]
     flattened_categories = list(itertools.chain(*filtered_categories))
-    print('categories: ' + json.dumps(categories_by_workspace))
     return make_response(json.dumps(flattened_categories), 200)
 
 
@@ -69,13 +68,9 @@ def process_data_store(data_store, workspace_name):
     category_name = data_store['name']
     feature_types_href = get(data_store['href'])['dataStore']['featureTypes']
     body = get(feature_types_href)
-    print('Llega')
-    print(body)
     if body != '':
         data_layers = body['featureTypes']['featureType']
-        print(data_layers)
         subcategories = list(map(lambda data_layer: process_data_layer(data_layer, workspace_name), data_layers))
-        print(subcategories)
         return {'category_name': category_name, 'subcategories': subcategories}
     else:
         print('Cannot process data store from workspace ' + workspace_name)
