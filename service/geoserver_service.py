@@ -69,9 +69,12 @@ def process_data_store(data_store, workspace_name):
     feature_types_href = get(data_store['href'])['dataStore']['featureTypes']
     body = get(feature_types_href)
     if body != '':
-        data_layers = body['featureTypes']['featureType']
-        subcategories = list(map(lambda data_layer: process_data_layer(data_layer, workspace_name), data_layers))
-        return {'category_name': category_name, 'subcategories': subcategories}
+        if body['featureTypes'] != '':
+            data_layers = body['featureTypes']['featureType']
+            subcategories = list(map(lambda data_layer: process_data_layer(data_layer, workspace_name), data_layers))
+            return {'category_name': category_name, 'subcategories': subcategories}
+        else:
+            return {}
     else:
         print('Cannot process data store from workspace ' + workspace_name)
         return {}
