@@ -6,19 +6,18 @@ from settings import GEOSERVER_BASE_URL, GEOSERVER_PASSWORD, GEOSERVER_USERNAME
 
 
 def get_categories():
-    body = get(GEOSERVER_BASE_URL + '/workspaces')
-    categories_by_workspace = list(
-        map(lambda workspace: process_workspace(workspace), body['workspaces']['workspace']))
-    filtered_categories = [category for category in categories_by_workspace if category != {}]
-    return make_response(json.dumps(filtered_categories), 200)
+    workspaces_body = get(GEOSERVER_BASE_URL + '/workspaces')
+    categories = list(map(lambda workspace: find_category(workspace), workspaces_body['workspaces']['workspace']))
+    non_empty_categories = [category for category in categories if category != {}]
+    return make_response(json.dumps(non_empty_categories), 200)
 
 
-def process_workspace(workspace):
+def find_category(workspace):
     subcategories = list(itertools.chain(
-        get_data_stores(workspace),
-        get_coverage_stores(workspace),
-        get_wms_stores(workspace),
-        get_wmts_stores(workspace)
+        find_subcategories_from_data_stores(workspace),
+        find_subcategories_from_coverage_stores(workspace),
+        find_subcategories_from_wms_stores(workspace),
+        find_subcategories_from_wmts_stores(workspace)
     ))
 
     if len(subcategories) != 0:
@@ -26,51 +25,51 @@ def process_workspace(workspace):
     return {}
 
 
-def get_data_stores(workspace):
+def find_subcategories_from_data_stores(workspace):
     body = get(GEOSERVER_BASE_URL + '/workspaces/' + workspace['name'] + '/datastores')
     if body['dataStores'] != '':
         data_stores = body['dataStores']['dataStore']
-        subcategories = list(itertools.chain(*list(map(lambda data_store: process_data_store(data_store, workspace['name']), data_stores))))
+        subcategories = list(itertools.chain(*list(map(lambda data_store: find_subcategories_from_data_store(data_store, workspace['name']), data_stores))))
         if len(subcategories) != 0:
             return subcategories
     print("No dataStores found for workspace " + workspace['name'])
     return []
 
 
-def get_coverage_stores(workspace):
+def find_subcategories_from_coverage_stores(workspace):
     body = get(GEOSERVER_BASE_URL + '/workspaces/' + workspace['name'] + '/coveragestores')
     if body['coverageStores'] != '':
         coverage_stores = body['coverageStores']['coverageStore']
-        subcategories = list(itertools.chain(*list(map(lambda coverage_store: process_coverage_store(coverage_store, workspace['name']), coverage_stores))))
+        subcategories = list(itertools.chain(*list(map(lambda coverage_store: find_subcategories_from_coverage_store(coverage_store, workspace['name']), coverage_stores))))
         if len(subcategories) != 0:
             return subcategories
     print("No coverageStores found for workspace " + workspace['name'])
     return []
 
 
-def get_wms_stores(workspace):
+def find_subcategories_from_wms_stores(workspace):
     body = get(GEOSERVER_BASE_URL + '/workspaces/' + workspace['name'] + '/wmsstores')
     if body['wmsStores'] != '':
         wms_stores = body['wmsStores']['wmsStore']
-        subcategories = list(itertools.chain(*list(map(lambda wms_store: process_wms_store(wms_store, workspace['name']), wms_stores))))
+        subcategories = list(itertools.chain(*list(map(lambda wms_store: find_subcategories_from_wms_store(wms_store, workspace['name']), wms_stores))))
         if len(subcategories) != 0:
             return subcategories
     print("No wmsStores found for workspace " + workspace['name'])
     return []
 
 
-def get_wmts_stores(workspace):
+def find_subcategories_from_wmts_stores(workspace):
     body = get(GEOSERVER_BASE_URL + '/workspaces/' + workspace['name'] + '/wmtsstores')
     if body['wmtsStores'] != '':
         data_stores = body['wmtsStores']['wmtsStore']
-        subcategories = list(itertools.chain(*list(map(lambda data_store: process_wmts_store(data_store, workspace['name']), data_stores))))
+        subcategories = list(itertools.chain(*list(map(lambda data_store: find_subcategories_from_wmts_store(data_store, workspace['name']), data_stores))))
         if len(subcategories) != 0:
             return subcategories
     print("No wmtsStores found for workspace " + workspace['name'])
     return []
 
 
-def process_data_store(data_store, workspace_name):
+def find_subcategories_from_data_store(data_store, workspace_name):
     feature_types_href = get(data_store['href'])['dataStore']['featureTypes']
     body = get(feature_types_href)
     if body != '' and body['featureTypes'] != '':
@@ -81,7 +80,7 @@ def process_data_store(data_store, workspace_name):
     return []
 
 
-def process_coverage_store(coverage_store, workspace_name):
+def find_subcategories_from_coverage_store(coverage_store, workspace_name):
     coverage_layers_href = get(coverage_store['href'])['coverageStore']['coverages']
     body = get(coverage_layers_href)
     if body != '' and body['coverages'] != '':
@@ -93,7 +92,7 @@ def process_coverage_store(coverage_store, workspace_name):
     return []
 
 
-def process_wms_store(wms_store, workspace_name):
+def find_subcategories_from_wms_store(wms_store, workspace_name):
     wms_layers_href = get(wms_store['href'])['wmsStore']['wmslayers']
     body = get(wms_layers_href)
     if body != '' and body['wmsLayers'] != '':
@@ -104,7 +103,7 @@ def process_wms_store(wms_store, workspace_name):
     return []
 
 
-def process_wmts_store(wmts_store, workspace_name):
+def find_subcategories_from_wmts_store(wmts_store, workspace_name):
     wmts_layers_href = get(wmts_store['href'])['wmtsStore']['layers']
     body = get(wmts_layers_href)
     if body != '' and body['wmtsLayers'] != '':
