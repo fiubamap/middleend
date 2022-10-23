@@ -120,4 +120,4 @@ def get(url):
 
 
 def build_subcategory(store_name, layer, workspace_name):
-    return {'name': store_name, 'layer_name': workspace_name + ':' + layer['name']}
+    return {'name': store_name, 'layer_name': workspace_name + ':' + layer['name'], 'layer_title': layer['name']}
