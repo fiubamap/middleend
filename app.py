@@ -1,6 +1,7 @@
 from flask import Flask
 import os
 
+from service.base_layers_service import get_base_layers_info
 from service.geoserver_service import get_categories
 
 app = Flask(__name__)
@@ -14,6 +15,13 @@ def hello_world():  # put application's code here
 @app.route('/categories')
 def get_all_categories():
     response = get_categories()
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
+@app.route('/layers/base')
+def get_base_layers():
+    response = get_base_layers_info()
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
