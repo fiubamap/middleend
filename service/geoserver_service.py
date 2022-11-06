@@ -73,7 +73,7 @@ def build_subcategory_from_data_store(data_store, workspace_name):
     body = get(feature_types_href)
     if body != '' and body['featureTypes'] != '':
         data_layers = body['featureTypes']['featureType']
-        layers = list(map(lambda data_layer: build_layer(data_layer, workspace_name), data_layers))
+        layers = list(filter(None, map(lambda data_layer: build_layer_from_data_store(data_layer, workspace_name), data_layers)))
         return build_subcategory(data_store['name'], layers)
     print('No layers found for category: ' + workspace_name + ' and subcategory: ' + data_store['name'])
     return
@@ -84,7 +84,7 @@ def build_subcategory_from_coverage_store(coverage_store, workspace_name):
     body = get(coverage_layers_href)
     if body != '' and body['coverages'] != '':
         coverage_layers = body['coverages']['coverage']
-        layers = list(map(lambda coverage_layer: build_layer(coverage_layer, workspace_name), coverage_layers))
+        layers = list(filter(None, map(lambda coverage_layer: build_layer_from_coverage_store(coverage_layer, workspace_name), coverage_layers)))
         return build_subcategory(coverage_store['name'], layers)
     print('No layers found for category: ' + workspace_name + ' and subcategory: ' + coverage_store['name'])
     return
@@ -95,7 +95,7 @@ def build_subcategory_from_wms_store(wms_store, workspace_name):
     body = get(wms_layers_href)
     if body != '' and body['wmsLayers'] != '':
         wms_layers = body['wmsLayers']['wmsLayer']
-        layers = list(map(lambda wms_layer: build_layer(wms_layer, workspace_name), wms_layers))
+        layers = list(filter(None, map(lambda wms_layer: build_layer_from_wms_store(wms_layer, workspace_name), wms_layers)))
         return build_subcategory(wms_store['name'], layers)
     print('No layers found for category: ' + workspace_name + ' and subcategory: ' + wms_store['name'])
     return
@@ -106,7 +106,7 @@ def build_subcategory_from_wmts_store(wmts_store, workspace_name):
     body = get(wmts_layers_href)
     if body != '' and body['wmtsLayers'] != '':
         wmts_layers = body['wmtsLayers']['wmtsLayer']
-        layers = list(map(lambda wmts_layer: build_layer(wmts_layer, workspace_name), wmts_layers))
+        layers = list(filter(None, map(lambda wmts_layer: build_layer_from_wmts_store(wmts_layer, workspace_name), wmts_layers)))
         return build_subcategory(wmts_store['name'], layers)
     print('No layers found for category: ' + workspace_name + ' and subcategory: ' + wmts_store['name'])
     return
@@ -118,8 +118,30 @@ def get(url):
 
 
 def build_subcategory(store_name, layers):
-    return {'name': store_name, 'layers': layers}
+    if layers:
+        return {'name': store_name, 'layers': layers}
+    return {}
 
 
-def build_layer(layer, workspace_name):
-    return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+def build_layer_from_data_store(layer, workspace_name):
+    if get(layer['href'])['featureType']['enabled']:
+        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+    return
+
+
+def build_layer_from_coverage_store(layer, workspace_name):
+    if get(layer['href'])['coverage']['enabled']:
+        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+    return
+
+
+def build_layer_from_wms_store(layer, workspace_name):
+    if get(layer['href'])['wmsLayer']['enabled']:
+        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+    return
+
+
+def build_layer_from_wmts_store(layer, workspace_name):
+    if get(layer['href'])['wmtsLayer']['enabled']:
+        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+    return
