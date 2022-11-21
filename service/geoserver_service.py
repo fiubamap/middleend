@@ -124,24 +124,28 @@ def build_subcategory(store_name, layers):
 
 
 def build_layer_from_data_store(layer, workspace_name):
-    if get(layer['href'])['featureType']['enabled']:
+    feature_type = get(layer['href'])['featureType']
+    if feature_type['enabled'] and (feature_type.get('advertised') is not None and feature_type['advertised']):
         return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
     return
 
 
 def build_layer_from_coverage_store(layer, workspace_name):
-    if get(layer['href'])['coverage']['enabled']:
+    coverage = get(layer['href'])['coverage']
+    if coverage['enabled'] and (coverage.get('advertised') is not None and coverage['advertised']):
         return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
     return
 
 
 def build_layer_from_wms_store(layer, workspace_name):
-    if get(layer['href'])['wmsLayer']['enabled']:
+    wmsLayer = get(layer['href'])['wmsLayer']
+    if wmsLayer['enabled'] and (wmsLayer.get('advertised') is not None and wmsLayer['advertised']):
         return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
     return
 
 
 def build_layer_from_wmts_store(layer, workspace_name):
-    if get(layer['href'])['wmtsLayer']['enabled']:
+    wmtsLayer = get(layer['href'])['wmtsLayer']
+    if wmtsLayer['enabled'] and (wmtsLayer.get('advertised') is not None and wmtsLayer['advertised']):
         return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
     return
