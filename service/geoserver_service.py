@@ -126,26 +126,38 @@ def build_subcategory(store_name, layers):
 def build_layer_from_data_store(layer, workspace_name):
     feature_type = get(layer['href'])['featureType']
     if feature_type['enabled'] and (feature_type.get('advertised') is not None and feature_type['advertised']):
-        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+        response = {'name': workspace_name + ':' + feature_type['name'], 'title': feature_type['name']}
+        if feature_type.get('abstract') is not None:
+            response['description'] = feature_type['abstract']
+        return response
     return
 
 
 def build_layer_from_coverage_store(layer, workspace_name):
     coverage = get(layer['href'])['coverage']
     if coverage['enabled'] and (coverage.get('advertised') is not None and coverage['advertised']):
-        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+        response = {'name': workspace_name + ':' + coverage['name'], 'title': coverage['name']}
+        if coverage.get('abstract') is not None:
+            response['description'] = coverage['abstract']
+        return response
     return
 
 
 def build_layer_from_wms_store(layer, workspace_name):
     wmsLayer = get(layer['href'])['wmsLayer']
     if wmsLayer['enabled'] and (wmsLayer.get('advertised') is not None and wmsLayer['advertised']):
-        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+        response = {'name': workspace_name + ':' + wmsLayer['name'], 'title': wmsLayer['name']}
+        if wmsLayer.get('abstract') is not None:
+            response['description'] = wmsLayer['abstract']
+        return response
     return
 
 
 def build_layer_from_wmts_store(layer, workspace_name):
     wmtsLayer = get(layer['href'])['wmtsLayer']
     if wmtsLayer['enabled'] and (wmtsLayer.get('advertised') is not None and wmtsLayer['advertised']):
-        return {'name': workspace_name + ':' + layer['name'], 'title': layer['name']}
+        response = {'name': workspace_name + ':' + wmtsLayer['name'], 'title': wmtsLayer['name']}
+        if wmtsLayer.get('abstract') is not None:
+            response['description'] = wmtsLayer['abstract']
+        return response
     return
