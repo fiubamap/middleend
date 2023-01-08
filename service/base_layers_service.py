@@ -15,6 +15,12 @@ def get_base_layers_info():
             'title': "Imagenes Satelitales ESRI",
             'image': "https://mapa.ign.gob.ar/src/styles/images/esri.png",
             'layer': "https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png"
+        },
+        {
+            'id': "none-base",
+            'title': "Ocultar capa base",
+            'image': "https://upload.wikimedia.org/wikipedia/commons/d/d2/Solid_white.png?20060513000852",
+            'layer': ""
         }
     ]
 
