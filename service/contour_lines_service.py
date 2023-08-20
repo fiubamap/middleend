@@ -22,7 +22,7 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
                <wps:Body>
                    <wcs:GetCoverage service="WCS" version="1.1.1">
                        <ows:Identifier>
-                           Dep.Informatica:3169_8
+                           Dep.Informatica:argentina
                        </ows:Identifier>
                        <wcs:DomainSubset>
                            <ows:BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">
