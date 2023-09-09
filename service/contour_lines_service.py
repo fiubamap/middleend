@@ -1,6 +1,5 @@
-import json
 import requests
-from flask import make_response
+
 from settings import GEOSERVER_WPS_URL, GEOSERVER_PASSWORD, GEOSERVER_USERNAME
 
 
@@ -22,7 +21,7 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
                <wps:Body>
                    <wcs:GetCoverage service="WCS" version="1.1.1">
                        <ows:Identifier>
-                           Dep.Informatica:argentina
+                           Dep.Informatica:3169_8
                        </ows:Identifier>
                        <wcs:DomainSubset>
                            <ows:BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">
@@ -72,5 +71,8 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
         GEOSERVER_WPS_URL,
         body,
         auth=(GEOSERVER_USERNAME, GEOSERVER_PASSWORD),
-        headers=headers)
+        headers=headers,
+        timeout=5)
     return response.json()
+
+
