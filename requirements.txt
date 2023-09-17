@@ -5,3 +5,4 @@ pytest-dependency==0.5.1
 requests~=2.22.0
 python-dotenv~=0.20.0
 Flask-Cors==3.0.10
+geopy==2.4.0

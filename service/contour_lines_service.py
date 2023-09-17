@@ -1,6 +1,4 @@
-import json
 import requests
-from flask import make_response
 from settings import GEOSERVER_WPS_URL, GEOSERVER_PASSWORD, GEOSERVER_USERNAME
 
 
@@ -66,7 +64,8 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
        </wps:RawDataOutput>
    </wps:ResponseForm>
 </wps:Execute>
-    """.format(lower_corner_x=lower_corner_x, lower_corner_y=lower_corner_y, upper_corner_x=upper_corner_x, upper_corner_y=upper_corner_y, distance=distance)
+    """.format(lower_corner_x=lower_corner_x, lower_corner_y=lower_corner_y, upper_corner_x=upper_corner_x,
+               upper_corner_y=upper_corner_y, distance=distance)
     headers = {'Content-Type': 'application/xml'}
     response = requests.post(
         GEOSERVER_WPS_URL,

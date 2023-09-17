@@ -5,6 +5,7 @@ import os
 from service.base_layers_service import get_base_layers_info
 from service.categories_service import build_categories
 from service.contour_lines_service import create_contour_lines
+from service.topographic_profile_service import get_elevation_data
 
 app = Flask(__name__)
 CORS(app)
@@ -52,6 +53,20 @@ def create_contour_lines_layer():
         'layer': layer
     }
     response = jsonify(response_body)
+
+    return make_response(response, 200)
+
+@app.route('/topographic-profile', methods=['POST'])
+def get_elevation_data_from_line():
+    request_body = request.get_json()
+    elevation_data = get_elevation_data(
+        request_body.get('start').get('x'),
+        request_body.get('start').get('y'),
+        request_body.get('end').get('x'),
+        request_body.get('end').get('y'),
+        request_body.get('points'))
+
+    response = jsonify(elevation_data)
 
     return make_response(response, 200)
 
