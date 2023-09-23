@@ -63,6 +63,7 @@ def create_contour_lines_layer():
             'message': 'Error al crear curvas de nivel'
         }, 500)
 
+
 @app.route('/topographic-profile', methods=['POST'])
 def get_elevation_data_from_line():
     request_body = request.get_json()
