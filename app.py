@@ -66,17 +66,22 @@ def create_contour_lines_layer():
 
 @app.route('/topographic-profile', methods=['POST'])
 def get_elevation_data_from_line():
-    request_body = request.get_json()
-    elevation_data = get_elevation_data(
-        request_body.get('start').get('x'),
-        request_body.get('start').get('y'),
-        request_body.get('end').get('x'),
-        request_body.get('end').get('y'),
-        request_body.get('points'))
+    try:
+        request_body = request.get_json()
+        elevation_data = get_elevation_data(
+            request_body.get('start').get('x'),
+            request_body.get('start').get('y'),
+            request_body.get('end').get('x'),
+            request_body.get('end').get('y'),
+            request_body.get('points'))
 
-    response = jsonify(elevation_data)
+        response = jsonify(elevation_data)
 
-    return make_response(response, 200)
+        return make_response(response, 200)
+    except:
+        return make_response({
+            'message': 'Error al crear perfil topografico'
+        }, 500)
 
 
 if __name__ == '__main__':
