@@ -29,6 +29,7 @@ def get_base_layers():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
 @app.route('/contour-lines', methods=['OPTIONS'])
 def handle_preflight():
     response = jsonify({'message': 'Preflight request successful'})
@@ -37,24 +38,30 @@ def handle_preflight():
     response.headers.add('Access-Control-Allow-Methods', 'POST, GET')
     return response
 
+
 @app.route('/contour-lines', methods=['POST'])
 def create_contour_lines_layer():
     request_body = request.get_json()
-    layer = create_contour_lines(
-        request_body.get('lower_corner').get('x'),
-        request_body.get('lower_corner').get('y'),
-        request_body.get('upper_corner').get('x'),
-        request_body.get('upper_corner').get('y'),
-        request_body.get('distance'))
+    try:
+        layer = create_contour_lines(
+            request_body.get('lower_corner').get('x'),
+            request_body.get('lower_corner').get('y'),
+            request_body.get('upper_corner').get('x'),
+            request_body.get('upper_corner').get('y'),
+            request_body.get('distance'))
 
-    response_body = {
-        'category': 'Geoprocesos',
-        'layer_name': 'curva_de_nivel',
-        'layer': layer
-    }
-    response = jsonify(response_body)
+        response_body = {
+            'category': 'Geoprocesos',
+            'layer_name': 'curva_de_nivel',
+            'layer': layer
+        }
+        response = jsonify(response_body)
 
-    return make_response(response, 200)
+        return make_response(response, 200)
+    except:
+        return make_response({
+            'message': 'Error al crear curvas de nivel'
+        }, 500)
 
 @app.route('/topographic-profile', methods=['POST'])
 def get_elevation_data_from_line():

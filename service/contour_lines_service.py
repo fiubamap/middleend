@@ -71,5 +71,8 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
         GEOSERVER_WPS_URL,
         body,
         auth=(GEOSERVER_USERNAME, GEOSERVER_PASSWORD),
-        headers=headers)
+        headers=headers,
+        timeout=5)
     return response.json()
+
+
