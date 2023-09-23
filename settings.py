@@ -7,5 +7,6 @@ load_dotenv(dotenv_path)
 
 GEOSERVER_BASE_URL = os.environ.get('GEOSERVER_BASE_URL')
 GEOSERVER_WPS_URL = os.environ.get('GEOSERVER_WPS_URL')
+GEOSERVER_OWS_URL = os.environ.get('GEOSERVER_OWS_URL')
 GEOSERVER_USERNAME = os.environ.get('GEOSERVER_USERNAME')
 GEOSERVER_PASSWORD = os.environ.get('GEOSERVER_PASSWORD')
