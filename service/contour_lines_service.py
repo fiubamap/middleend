@@ -1,5 +1,5 @@
 import requests
-from settings import GEOSERVER_WPS_URL, GEOSERVER_PASSWORD, GEOSERVER_USERNAME
+from settings import GEOSERVER_WPS_URL, GEOSERVER_PASSWORD, GEOSERVER_USERNAME, CONTOUR_LINES_LAYER
 
 
 def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_corner_y, distance):
@@ -20,7 +20,7 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
                <wps:Body>
                    <wcs:GetCoverage service="WCS" version="1.1.1">
                        <ows:Identifier>
-                           Dep.Informatica:argentina
+                           {layer}
                        </ows:Identifier>
                        <wcs:DomainSubset>
                            <ows:BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">
@@ -65,14 +65,13 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
    </wps:ResponseForm>
 </wps:Execute>
     """.format(lower_corner_x=lower_corner_x, lower_corner_y=lower_corner_y, upper_corner_x=upper_corner_x,
-               upper_corner_y=upper_corner_y, distance=distance)
+               upper_corner_y=upper_corner_y, distance=distance, layer=CONTOUR_LINES_LAYER)
     headers = {'Content-Type': 'application/xml'}
     response = requests.post(
         GEOSERVER_WPS_URL,
         body,
         auth=(GEOSERVER_USERNAME, GEOSERVER_PASSWORD),
         headers=headers,
-        timeout=5)
+        timeout=15)
     return response.json()
-
 
