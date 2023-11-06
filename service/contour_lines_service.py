@@ -1,8 +1,20 @@
 import requests
+import math
 from settings import GEOSERVER_WPS_URL, GEOSERVER_PASSWORD, GEOSERVER_USERNAME, CONTOUR_LINES_LAYER
+
+MAXIMUM_AREA_IN_KM2 = 200
+
+
+class InvalidMaximumAreaException(Exception):
+    pass
 
 
 def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_corner_y, distance):
+    area = calculate_selected_area(lower_corner_x, lower_corner_y, upper_corner_x, upper_corner_y)
+    if area > MAXIMUM_AREA_IN_KM2:
+        raise InvalidMaximumAreaException("El área seleccionada es " + str(area) + " y supera el máximo permitido de " + str(MAXIMUM_AREA_IN_KM2) + " km2")
+
+
     body = """<?xml version="1.0" encoding="UTF-8"?>
 <wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs"
@@ -74,4 +86,27 @@ def create_contour_lines(lower_corner_x, lower_corner_y, upper_corner_x, upper_c
         headers=headers,
         timeout=15)
     return response.json()
+
+
+def calculate_selected_area(lower_corner_x, lower_corner_y, upper_corner_x, upper_corner_y):
+    # Radio de la Tierra en kilómetros (aproximado)
+    radio_tierra = 6371  # En kilómetros
+
+    # Convertir diferencias en coordenadas de latitud y longitud a radianes
+    lat1 = math.radians(lower_corner_x)
+    lon1 = math.radians(lower_corner_y)
+    lat2 = math.radians(upper_corner_x)
+    lon2 = math.radians(upper_corner_y)
+
+    # Calcular el largo y el ancho en kilómetros
+    largo = radio_tierra * abs(lon2 - lon1)
+    ancho = radio_tierra * abs(lat2 - lat1)
+
+    # Calcular el área en kilómetros cuadrados
+    area = largo * ancho
+
+    # Imprimir el resultado
+    print("El área del rectángulo es ", area, " km2")
+
+    return area
 
