@@ -6,6 +6,7 @@ from service.base_layers_service import get_base_layers_info
 from service.categories_service import build_categories
 from service.contour_lines_service import create_contour_lines
 from service.topographic_profile_service import get_elevation_data
+from service.contour_lines_service import InvalidMaximumAreaException
 
 app = Flask(__name__)
 CORS(app)
@@ -58,6 +59,10 @@ def create_contour_lines_layer():
         response = jsonify(response_body)
 
         return make_response(response, 200)
+    except InvalidMaximumAreaException as e:
+        return make_response({
+            'message': str(e)
+        }, 400)
     except:
         return make_response({
             'message': 'Error al crear curvas de nivel'
