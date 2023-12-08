@@ -145,7 +145,7 @@ def build_layer_from_data_store(layer, workspace_name):
     res = get(layer['href'])
     if 'featureType' in res:
         feature_type = res['featureType']
-        if feature_type['enabled'] and (feature_type.get('advertised') is not None and feature_type['advertised']):
+        if feature_type['enabled'] and ((feature_type.get('advertised') is not None and feature_type['advertised']) or feature_type.get('advertised') is None):
             response = {'name': workspace_name + ':' + feature_type['name'], 'title': feature_type['name']}
             if feature_type.get('abstract') is not None:
                 response['description'] = feature_type['abstract']
@@ -157,7 +157,7 @@ def build_layer_from_coverage_store(layer, workspace_name):
     res = get(layer['href'])
     if 'coverage' in res:
         coverage = res['coverage']
-        if coverage['enabled'] and (coverage.get('advertised') is not None and coverage['advertised']):
+        if coverage['enabled'] and ((coverage.get('advertised') is not None and coverage['advertised']) or coverage.get('advertised') is None):
             response = {'name': workspace_name + ':' + coverage['name'], 'title': coverage['name']}
             if coverage.get('abstract') is not None:
                 response['description'] = coverage['abstract']
